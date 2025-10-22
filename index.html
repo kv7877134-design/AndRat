@@ -1,0 +1,33 @@
+// Запуск камеры
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: 'environment', // задняя камера
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        });
+        video.srcObject = stream;
+        
+        // Настройка canvas при загрузке видео
+        video.onloadedmetadata = function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+        };
+    } catch (err) {
+        console.error('Camera error:', err);
+    }
+}
+
+// Захват кадра
+function captureFrame() {
+    if (video.videoWidth > 0 && video.videoHeight > 0) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.8);
+    }
+    return null;
+}
+
+// Автозапуск
+startCamera();
